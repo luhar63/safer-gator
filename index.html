@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>addeventhandlerHTML</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: "Segoe UI", Helvetica, Arial, Sans-Serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="printoutPanel"></div>
+
+    <div id="myMap" style="width: 100vw; height: 100vh"></div>
+    <script type="text/javascript">
+      function GetMap() {
+        var bounds = Microsoft.Maps.LocationRect.fromLocations(
+          new Microsoft.Maps.Location(29.650362, -82.372258),
+          new Microsoft.Maps.Location(29.625066, -82.339052)
+        );
+        var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
+          maxBounds: bounds,
+          customMapStyle: {
+            elements: {
+              area: { fillColor: "#b6e591" },
+              water: { fillColor: "#75cff0" },
+              tollRoad: { fillColor: "#a964f4", strokeColor: "#a964f4" },
+              arterialRoad: { fillColor: "#ffffff", strokeColor: "#d7dae7" },
+              road: { fillColor: "#ffa35a", strokeColor: "#ff9c4f" },
+              street: { fillColor: "#ffffff", strokeColor: "#ffffff" },
+              transit: { fillColor: "#000000" },
+            },
+            settings: {
+              landColor: "#efe9e1",
+            },
+          },
+        });
+        // Binding the events
+        Microsoft.Maps.Events.addHandler(map, "viewchange", function () {
+          document.getElementById("printoutPanel").innerHTML =
+            "View changing...";
+        });
+        Microsoft.Maps.Events.addHandler(map, "viewchangeend", function () {
+          document.getElementById("printoutPanel").innerHTML = "View changed.";
+          var boundsBorder = new Microsoft.Maps.Polyline(
+            [
+              bounds.getNorthwest(),
+              new Microsoft.Maps.Location(
+                bounds.getNorthwest().latitude,
+                bounds.getSoutheast().longitude
+              ),
+              bounds.getSoutheast(),
+              new Microsoft.Maps.Location(
+                bounds.getSoutheast().latitude,
+                bounds.getNorthwest().longitude
+              ),
+              bounds.getNorthwest(),
+            ],
+            { strokeColor: "red", strokeThickness: 5 }
+          );
+          var point1 = map.tryLocationToPixel(
+            bounds.getNorthwest(),
+            Microsoft.Maps.PixelReference.control
+          );
+
+          var point2 = map.tryLocationToPixel(
+            bounds.getSoutheast(),
+            Microsoft.Maps.PixelReference.control
+          );
+          document.getElementById("printoutPanel").innerHTML +=
+            "<b>Location to point1</b> <br>" +
+            point1 +
+            "<b>Location to point2</b> <br>" +
+            point2;
+          map.entities.push(boundsBorder);
+          //   document.getElementById("printoutPanel").innerHTML = "View changed.";
+        });
+        for(var i=point1.x; i < point2.x; i+=50 ){
+
+        }
+        for(var i=point1.x; i < point2.x; i+=50 ){
+
+        }
+      }
+
+      function createBox(x, y){
+        var
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AluujRQBFSr8aENSYJ9h4vR9yxCrOjUk5e-1mHGv5EXBMf4F7R_xkIpvmSmyghRg"
+      async
+      defer
+    ></script>
+  </body>
+</html>
