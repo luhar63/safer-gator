@@ -39,6 +39,43 @@
             },
           },
         });
+        document.getElementById("printoutPanel").innerHTML = "View changed.";
+        var boundsBorder = new Microsoft.Maps.Polyline(
+          [
+            bounds.getNorthwest(),
+            new Microsoft.Maps.Location(
+              bounds.getNorthwest().latitude,
+              bounds.getSoutheast().longitude
+            ),
+            bounds.getSoutheast(),
+            new Microsoft.Maps.Location(
+              bounds.getSoutheast().latitude,
+              bounds.getNorthwest().longitude
+            ),
+            bounds.getNorthwest(),
+          ],
+          { strokeColor: "red", strokeThickness: 5 }
+        );
+        var point1 = map.tryLocationToPixel(
+          bounds.getNorthwest(),
+          Microsoft.Maps.PixelReference.control
+        );
+
+        var point2 = map.tryLocationToPixel(
+          bounds.getSoutheast(),
+          Microsoft.Maps.PixelReference.control
+        );
+        document.getElementById("printoutPanel").innerHTML +=
+          "<b>Location to point1</b> <br>" +
+          point1 +
+          "<b>Location to point2</b> <br>" +
+          point2;
+        map.entities.push(boundsBorder);
+        for (var x = point1.x; x <= point2.x; x += 16) {
+          for (var y = point1.y; y <= point2.y; y += 16) {
+            createBox(map, x, y);
+          }
+        }
         // Binding the events
         Microsoft.Maps.Events.addHandler(map, "viewchange", function () {
           document.getElementById("printoutPanel").innerHTML =
@@ -46,46 +83,41 @@
         });
         Microsoft.Maps.Events.addHandler(map, "viewchangeend", function () {
           document.getElementById("printoutPanel").innerHTML = "View changed.";
-          var boundsBorder = new Microsoft.Maps.Polyline(
-            [
-              bounds.getNorthwest(),
-              new Microsoft.Maps.Location(
-                bounds.getNorthwest().latitude,
-                bounds.getSoutheast().longitude
-              ),
-              bounds.getSoutheast(),
-              new Microsoft.Maps.Location(
-                bounds.getSoutheast().latitude,
-                bounds.getNorthwest().longitude
-              ),
-              bounds.getNorthwest(),
-            ],
-            { strokeColor: "red", strokeThickness: 5 }
-          );
-          var point1 = map.tryLocationToPixel(
-            bounds.getNorthwest(),
-            Microsoft.Maps.PixelReference.control
-          );
-
-          var point2 = map.tryLocationToPixel(
-            bounds.getSoutheast(),
-            Microsoft.Maps.PixelReference.control
-          );
-          document.getElementById("printoutPanel").innerHTML +=
-            "<b>Location to point1</b> <br>" +
-            point1 +
-            "<b>Location to point2</b> <br>" +
-            point2;
-          map.entities.push(boundsBorder);
-          //   document.getElementById("printoutPanel").innerHTML = "View changed.";
         });
-        // for (var i = point1.x; i < point2.x; i += 50) {}
-        // for (var i = point1.x; i < point2.x; i += 50) {}
+      }
+      function createBox(map, x, y) {
+        var bounds = Microsoft.Maps.LocationRect.fromLocations(
+          map.tryPixelToLocation(
+            new Microsoft.Maps.Point(x, y),
+            Microsoft.Maps.PixelReference.control
+          ),
+          map.tryPixelToLocation(
+            new Microsoft.Maps.Point(x + 16, y + 16),
+            Microsoft.Maps.PixelReference.control
+          )
+        );
+        var boundsBorder = new Microsoft.Maps.Polyline(
+          [
+            bounds.getNorthwest(),
+            new Microsoft.Maps.Location(
+              bounds.getNorthwest().latitude,
+              bounds.getSoutheast().longitude
+            ),
+            bounds.getSoutheast(),
+            new Microsoft.Maps.Location(
+              bounds.getSoutheast().latitude,
+              bounds.getNorthwest().longitude
+            ),
+            bounds.getNorthwest(),
+          ],
+          { strokeColor: "blue", strokeThickness: 1 }
+        );
+        map.entities.push(boundsBorder);
       }
     </script>
     <script
       type="text/javascript"
-      src="https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AluujRQBFSr8aENSYJ9h4vR9yxCrOjUk5e-1mHGv5EXBMf4F7R_xkIpvmSmyghRg"
+      src="http://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AluujRQBFSr8aENSYJ9h4vR9yxCrOjUk5e-1mHGv5EXBMf4F7R_xkIpvmSmyghRg"
       async
       defer
     ></script>
