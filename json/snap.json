@@ -1,0 +1,251 @@
+{ "type": "FeatureCollection",
+    				"features": [
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Alph Epsilon Phi"},
+"geometry": {"type":"Point","coordinates":[-82.33925968,29.64388711]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Alpha Chi Omega"},
+"geometry": {"type":"Point","coordinates":[-82.33927041,29.64428807]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Alpha Delta Pi"},
+"geometry": {"type":"Point","coordinates":[-82.33815461,29.64366798]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Alpha Omnicron Pi"},
+"geometry": {"type":"Point","coordinates":[-82.33809829,29.6442152]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Bat House"},
+"geometry": {"type":"Point","coordinates":[-82.36267269,29.64377055]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Beaty Towers"},
+"geometry": {"type":"Point","coordinates":[-82.34071881,29.64480558]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Ben Hill Griffin Stadium"},
+"geometry": {"type":"Point","coordinates":[-82.34965324,29.65115071]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Brain Institute"},
+"geometry": {"type":"Point","coordinates":[-82.34375104,29.64187862]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Buckman Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34474145,29.65073264]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Campus Edge"},
+"geometry": {"type":"Point","coordinates":[-82.35880494,29.6356205]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Cancer Research Center"},
+"geometry": {"type":"Point","coordinates":[-82.35061347,29.63906887]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Center for Performing Arts"},
+"geometry": {"type":"Point","coordinates":[-82.36930177,29.63605875]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Century Tower"},
+"geometry": {"type":"Point","coordinates":[-82.34333798,29.64879406]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Chi Omega"},
+"geometry": {"type":"Point","coordinates":[-82.33804196,29.64488717]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "College of Veterinary Medicine"},
+"geometry": {"type":"Point","coordinates":[-82.35115528,29.63397456]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Continuum"},
+"geometry": {"type":"Point","coordinates":[-82.329982,29.65105999]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Corr"},
+"geometry": {"type":"Point","coordinates":[-82.36011922,29.64767749]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Corry Village"},
+"geometry": {"type":"Point","coordinates":[-82.36053228,29.64646533]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Criser Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34131828,29.64975328]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Delta Delta Delta"},
+"geometry": {"type":"Point","coordinates":[-82.33703211,29.64489649]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Delta Gamma Sorority"},
+"geometry": {"type":"Point","coordinates":[-82.33891502,29.64489763]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Delta Phi Epsilon"},
+"geometry": {"type":"Point","coordinates":[-82.33620465,29.64301992]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Delta Zeta"},
+"geometry": {"type":"Point","coordinates":[-82.33924359,29.6433999]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Diamond Village"},
+"geometry": {"type":"Point","coordinates":[-82.33967543,29.64349547]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "East Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34977797,29.64767342]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Entomology"},
+"geometry": {"type":"Point","coordinates":[-82.3664546,29.63582566]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Fitfield Hall"},
+"geometry": {"type":"Point","coordinates":[-82.36112237,29.63763943]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Florida Gymnasium"},
+"geometry": {"type":"Point","coordinates":[-82.3472634,29.64872339]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Frazier Rogers Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34599203,29.64483355]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Garage 2"},
+"geometry": {"type":"Point","coordinates":[-82.34709978,29.63886801]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Garage 5"},
+"geometry": {"type":"Point","coordinates":[-82.35085487,29.64277281]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Gator Corner Dining"},
+"geometry": {"type":"Point","coordinates":[-82.34972969,29.64864604]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Graham Hall"},
+"geometry": {"type":"Point","coordinates":[-82.35029027,29.64592537]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Hilton"},
+"geometry": {"type":"Point","coordinates":[-82.37362146,29.6370939]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "HPNP"},
+"geometry": {"type":"Point","coordinates":[-82.34603226,29.64089853]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Human Resources"},
+"geometry": {"type":"Point","coordinates":[-82.33419836,29.65204348]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Hume Hall"},
+"geometry": {"type":"Point","coordinates":[-82.35224225,29.64495532]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "IBC"},
+"geometry": {"type":"Point","coordinates":[-82.34192245,29.65267015]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "IFAS"},
+"geometry": {"type":"Point","coordinates":[-82.35836506,29.63808237]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Ivy House"},
+"geometry": {"type":"Point","coordinates":[-82.33575404,29.64485686]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Jennings Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34265536,29.64461576]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Kappa Alpha Theta"},
+"geometry": {"type":"Point","coordinates":[-82.33500034,29.64528929]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Kappa Delta"},
+"geometry": {"type":"Point","coordinates":[-82.33656675,29.64489416]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Kappa Kappa Gamma"},
+"geometry": {"type":"Point","coordinates":[-82.33901426,29.64842834]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Keys Complex"},
+"geometry": {"type":"Point","coordinates":[-82.35293895,29.64820897]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Lakeside"},
+"geometry": {"type":"Point","coordinates":[-82.36626416,29.64210527]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Law School"},
+"geometry": {"type":"Point","coordinates":[-82.36036599,29.64947239]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Library West"},
+"geometry": {"type":"Point","coordinates":[-82.3434788,29.64974279]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Little Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34140947,29.64882558]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Maguire Village"},
+"geometry": {"type":"Point","coordinates":[-82.36950025,29.64114013]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Mehroff Complex"},
+"geometry": {"type":"Point","coordinates":[-82.36149788,29.63379271]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Microbiology Building"},
+"geometry": {"type":"Point","coordinates":[-82.36373484,29.64029241]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Murphree Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34602958,29.65033254]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "New Engineering Building"},
+"geometry": {"type":"Point","coordinates":[-82.34680876,29.64270529]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Norman Hall"},
+"geometry": {"type":"Point","coordinates":[-82.33724266,29.64599048]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Oakbrook Walk"},
+"geometry": {"type":"Point","coordinates":[-82.338687,29.63791799]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Park and Ride"},
+"geometry": {"type":"Point","coordinates":[-82.37633184,29.63778636]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Phi Mu"},
+"geometry": {"type":"Point","coordinates":[-82.33784348,29.64389212]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Physics"},
+"geometry": {"type":"Point","coordinates":[-82.35039353,29.64356541]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Pi Beta Phi"},
+"geometry": {"type":"Point","coordinates":[-82.35951304,29.64755474]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Psychology Building"},
+"geometry": {"type":"Point","coordinates":[-82.34691873,29.64335211]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Pugh Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34471798,29.64959477]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Rawlings Hall"},
+"geometry": {"type":"Point","coordinates":[-82.3435083,29.64616811]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Reid Hall"},
+"geometry": {"type":"Point","coordinates":[-82.33969018,29.64649563]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Reitz Bus Stop"},
+"geometry": {"type":"Point","coordinates":[-82.34690398,29.64513427]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Reitz Student Union"},
+"geometry": {"type":"Point","coordinates":[-82.34834969,29.64622056]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Shands ER North"},
+"geometry": {"type":"Point","coordinates":[-82.34204382,29.64010358]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Shands ER South"},
+"geometry": {"type":"Point","coordinates":[-82.34306037,29.63842507]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Sigma Alpha Epsilon Fraternity"},
+"geometry": {"type":"Point","coordinates":[-82.35507131,29.64496191]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Sigma Kappa Sorority"},
+"geometry": {"type":"Point","coordinates":[-82.3359713,29.64485147]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Southwest Recreation Center"},
+"geometry": {"type":"Point","coordinates":[-82.36835897,29.63774667]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Springs Complex"},
+"geometry": {"type":"Point","coordinates":[-82.35761404,29.6483535]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Springs Complex Stairs"},
+"geometry": {"type":"Point","coordinates":[-82.35691935,29.64799917]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Surge Area"},
+"geometry": {"type":"Point","coordinates":[-82.36593694,29.63058063]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Tanglewood Village"},
+"geometry": {"type":"Point","coordinates":[-82.33916849,29.62425809]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "The Hub"},
+"geometry": {"type":"Point","coordinates":[-82.34526783,29.64859592]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Tigert Hall"},
+"geometry": {"type":"Point","coordinates":[-82.33999327,29.6502942]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Tolbert Hall"},
+"geometry": {"type":"Point","coordinates":[-82.35091254,29.64825857]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "University of Florida Police Department"},
+"geometry": {"type":"Point","coordinates":[-82.34313548,29.64478883]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "University Village South"},
+"geometry": {"type":"Point","coordinates":[-82.3703599,29.63771869]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Warphaus"},
+"geometry": {"type":"Point","coordinates":[-82.3309093,29.64838796]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Yulee Hall"},
+"geometry": {"type":"Point","coordinates":[-82.34031916,29.64608303]}},
+{ "type": "Feature", "properties": {
+"JTYPE": "SNAP","DESCR": "Zeta Tau Alpha"},
+"geometry": {"type":"Point","coordinates":[-82.33771205,29.64455615]}}]}

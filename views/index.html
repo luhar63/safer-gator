@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>addeventhandlerHTML</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: "Segoe UI", Helvetica, Arial, Sans-Serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="printoutPanel"></div>
+
+    <div id="myMap" style="width: 100vw; height: 100vh"></div>
+    <script type="text/javascript">
+      var building = {};
+      function getData(url, headers) {
+        return new Promise((resolve, reject) => {
+          fetch(url, {
+            mode: "cors",
+            header: headers,
+            method: "GET",
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              resolve(data);
+            })
+            .catch((error) => {
+              console.log("Error: \n");
+              reject(error);
+            });
+        });
+      }
+
+      function createPolygon(points, map) {
+        var polyData = [];
+        points.forEach((point) => {
+          const [long, lat] = point;
+          polyData.push(new Microsoft.Maps.Location(lat, long));
+        });
+        var polygon = new Microsoft.Maps.Polygon(polyData);
+        polygon.setOptions({
+          fillColor: "#96ef942b",
+        });
+        map.entities.push(polygon);
+      }
+
+      async function getZone(map) {
+        const myHeaders = new Headers();
+        let response = await getData("http://localhost:3000/api/buildings", {
+          "Content-Type": "application/json",
+        });
+        const buildings = response.features;
+        buildings.forEach((item) => {
+          // response.forEach((item) => {
+          if (item.geometry.type === "Polygon") {
+            item.geometry.coordinates.forEach((coordinates) => {
+              createPolygon(coordinates, map);
+            });
+          }
+          // createPolygon(item.zone, map);
+        });
+      }
+      // init();
+      function createBox(x1, y1, x2, y2) {
+        var bounds = Microsoft.Maps.LocationRect.fromLocations(
+          new Microsoft.Maps.Location(x1, y1),
+          new Microsoft.Maps.Location(x2, y2)
+        );
+        var boundsBorder = new Microsoft.Maps.Polyline(
+          [
+            bounds.getNorthwest(),
+            new Microsoft.Maps.Location(
+              bounds.getNorthwest().latitude,
+              bounds.getSoutheast().longitude
+            ),
+            bounds.getSoutheast(),
+            new Microsoft.Maps.Location(
+              bounds.getSoutheast().latitude,
+              bounds.getNorthwest().longitude
+            ),
+            bounds.getNorthwest(),
+          ],
+          { strokeColor: "blue", strokeThickness: 1 }
+        );
+        return boundsBorder;
+      }
+      async function getPolygon(map) {
+        let response = await getData("http://localhost:3000/api/polygons", {
+          "Content-Type": "application/json",
+        });
+        response.forEach((item) => {
+          // if (building.geometry.type === "Polygon") {
+          //   building.geometry.coordinates.forEach((coordinates) => {
+          //     createPolygon(coordinates, map);
+          //   });
+          // }
+          const boundsBorder = createBox(item[0], item[1], item[2], item[3]);
+          map.entities.push(boundsBorder);
+        });
+      }
+      function GetMap() {
+        var bounds = Microsoft.Maps.LocationRect.fromLocations(
+          new Microsoft.Maps.Location(29.652679, -82.37579),
+          new Microsoft.Maps.Location(29.629072, -82.338049)
+        );
+
+        var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
+          maxBounds: bounds,
+          // disableStreetside: true,
+          center: new Microsoft.Maps.Location(29.652679, -82.37579),
+          // customMapStyle: {
+          //   elements: {
+          //     area: { fillColor: "#b6e591" },
+          //     water: { fillColor: "#75cff0" },
+          //     tollRoad: { fillColor: "#a964f4", strokeColor: "#a964f4" },
+          //     arterialRoad: { fillColor: "#ffffff", strokeColor: "#d7dae7" },
+          //     road: { fillColor: "#ffa35a", strokeColor: "#ff9c4f" },
+          //     street: { fillColor: "#ffffff", strokeColor: "#ffffff" },
+          //     transit: { fillColor: "#000000" },
+          //   },
+          //   settings: {
+          //     landColor: "#efe9e1",
+          //   },
+          // },
+        });
+        getZone(map);
+        // getPolygon(map);
+        let pointMap = [];
+        Microsoft.Maps.Events.addHandler(map, "click", function (e) {
+          const location = e.location;
+          pointMap.push([location.latitude, location.longitude]);
+          var polyData = [];
+          pointMap.forEach((element) => {
+            [lat, long] = element;
+            polyData.push(new Microsoft.Maps.Location(lat, long));
+          });
+          var polygon = new Microsoft.Maps.Polygon(polyData);
+          map.entities.push(polygon);
+          polygon.setOptions({
+            fillColor: "transparent",
+          });
+          console.log(JSON.stringify(pointMap));
+        });
+        // }
+
+        document.getElementById("printoutPanel").innerHTML = "View changed.";
+        var boundsBorder = new Microsoft.Maps.Polyline(
+          [
+            bounds.getNorthwest(),
+            new Microsoft.Maps.Location(
+              bounds.getNorthwest().latitude,
+              bounds.getSoutheast().longitude
+            ),
+            bounds.getSoutheast(),
+            new Microsoft.Maps.Location(
+              bounds.getSoutheast().latitude,
+              bounds.getNorthwest().longitude
+            ),
+            bounds.getNorthwest(),
+          ],
+          { strokeColor: "red", strokeThickness: 5 }
+        );
+        var point1 = map.tryLocationToPixel(
+          bounds.getNorthwest(),
+          Microsoft.Maps.PixelReference.control
+        );
+
+        var point2 = map.tryLocationToPixel(
+          bounds.getSoutheast(),
+          Microsoft.Maps.PixelReference.control
+        );
+        document.getElementById("printoutPanel").innerHTML +=
+          "<b>Location to point1</b> <br>" +
+          point1 +
+          "<b>Location to point2</b> <br>" +
+          point2;
+        map.entities.push(boundsBorder);
+        for (var x = point1.x; x <= point2.x; x += 16) {
+          for (var y = point1.y; y <= point2.y; y += 16) {
+            createBox(map, x, y);
+          }
+        }
+        // Binding the events
+        Microsoft.Maps.Events.addHandler(map, "viewchange", function () {
+          document.getElementById("printoutPanel").innerHTML =
+            "View changing...";
+        });
+        Microsoft.Maps.Events.addHandler(map, "viewchangeend", function () {
+          document.getElementById("printoutPanel").innerHTML = "View changed.";
+        });
+      }
+      function createBox(map, x, y) {
+        var bounds = Microsoft.Maps.LocationRect.fromLocations(
+          map.tryPixelToLocation(
+            new Microsoft.Maps.Point(x, y),
+            Microsoft.Maps.PixelReference.control
+          ),
+          map.tryPixelToLocation(
+            new Microsoft.Maps.Point(x + 16, y + 16),
+            Microsoft.Maps.PixelReference.control
+          )
+        );
+        var boundsBorder = new Microsoft.Maps.Polyline(
+          [
+            bounds.getNorthwest(),
+            new Microsoft.Maps.Location(
+              bounds.getNorthwest().latitude,
+              bounds.getSoutheast().longitude
+            ),
+            bounds.getSoutheast(),
+            new Microsoft.Maps.Location(
+              bounds.getSoutheast().latitude,
+              bounds.getNorthwest().longitude
+            ),
+            bounds.getNorthwest(),
+          ],
+          { strokeColor: "blue", strokeThickness: 1 }
+        );
+        map.entities.push(boundsBorder);
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AluujRQBFSr8aENSYJ9h4vR9yxCrOjUk5e-1mHGv5EXBMf4F7R_xkIpvmSmyghRg"
+      async
+      defer
+    ></script>
+  </body>
+</html>
