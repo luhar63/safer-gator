@@ -218,8 +218,8 @@
           // }
           const [lat, long] = item;
           if (
-            lat >= 29.628179 &&
-            lat <= 29.652244 &&
+            lat >= 29.528179 &&
+            lat <= 29.752244 &&
             long >= -82.372585 &&
             long <= -82.339005
           ) {
@@ -301,7 +301,7 @@
             ),
             bounds.getNorthwest(),
           ],
-          { strokeColor: "red", strokeThickness: 5 }
+          { strokeColor: "transparent", strokeThickness: 5 }
         );
         var point1 = map.tryLocationToPixel(
           bounds.getNorthwest(),
