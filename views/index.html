@@ -18,6 +18,7 @@
     <div id="myMap" style="width: 100vw; height: 100vh"></div>
     <script type="text/javascript">
       var building = {};
+
       function getData(url, headers) {
         return new Promise((resolve, reject) => {
           fetch(url, {
@@ -65,7 +66,9 @@
           // createPolygon(item.zone, map);
         });
       }
+
       // init();
+
       function createBox(x1, y1, x2, y2) {
         var bounds = Microsoft.Maps.LocationRect.fromLocations(
           new Microsoft.Maps.Location(x1, y1),
@@ -103,10 +106,141 @@
           map.entities.push(boundsBorder);
         });
       }
+      function createCirclePushpin(
+        location,
+        radius,
+        fillColor,
+        strokeColor,
+        strokeWidth
+      ) {
+        if (strokeColor === void 0) {
+          strokeColor = "";
+        }
+        if (strokeWidth === void 0) {
+          strokeWidth = 0;
+        }
+        //Create an SVG string of a circle with the specified radius and color.
+        var svg =
+          '<svg xmlns="http://www.w3.org/2000/svg" width="' +
+          2 * radius +
+          '" height="' +
+          2 * radius +
+          '">\n        <circle cx="' +
+          radius +
+          '" cy="' +
+          radius +
+          '" r="' +
+          (radius - strokeWidth) +
+          '" stroke="' +
+          strokeColor +
+          '" stroke-width="' +
+          strokeWidth +
+          '" fill="' +
+          fillColor +
+          '"/></svg>';
+        //Create a pushpin from the SVG and anchor it to the center of the circle.
+        return new Microsoft.Maps.Pushpin(location, {
+          icon: svg,
+          anchor: new Microsoft.Maps.Point(radius, radius),
+        });
+      }
+      async function getBLP(map) {
+        let response = await getData("http://localhost:3000/api/blp", {
+          "Content-Type": "application/json",
+        });
+        response = response.features;
+        response.forEach((item) => {
+          // if (building.geometry.type === "Polygon") {
+          //   building.geometry.coordinates.forEach((coordinates) => {
+          //     createPolygon(coordinates, map);
+          //   });
+          // }
+          const [long, lat] = item.geometry.coordinates;
+          const boundsBorder = createCirclePushpin(
+            new Microsoft.Maps.Location(lat, long),
+            3,
+            "rgba(0, 0, 255, 0.5)"
+          );
+          map.entities.push(boundsBorder);
+        });
+      }
+      async function getSearch(map) {
+        let response = await getData("http://localhost:3000/api/search", {
+          "Content-Type": "application/json",
+        });
+        response.forEach((item) => {
+          // if (building.geometry.type === "Polygon") {
+          //   building.geometry.coordinates.forEach((coordinates) => {
+          //     createPolygon(coordinates, map);
+          //   });
+          // }
+          if (item.JTYPE == "BLDG" && item.LAT && item.LON) {
+            const boundsBorder = createCirclePushpin(
+              new Microsoft.Maps.Location(item.LAT, item.LON),
+              3,
+              "rgba(180, 73, 199, 0.4)"
+            );
+            map.entities.push(boundsBorder);
+          }
+        });
+      }
+
+      async function getBusStops(map) {
+        let response = await getData("http://localhost:3000/api/bus_stops", {
+          "Content-Type": "application/json",
+        });
+        response = response.features;
+        response.forEach((item) => {
+          // if (building.geometry.type === "Polygon") {
+          //   building.geometry.coordinates.forEach((coordinates) => {
+          //     createPolygon(coordinates, map);
+          //   });
+          // }
+          const [long, lat] = item.geometry.coordinates;
+          const boundsBorder = createCirclePushpin(
+            new Microsoft.Maps.Location(lat, long),
+            3,
+            "rgba(0, 0, 0, 0.5)"
+          );
+          map.entities.push(boundsBorder);
+        });
+      }
+      async function getCrimes(map) {
+        let response = await getData("http://localhost:3000/api/crimes", {
+          "Content-Type": "application/json",
+        });
+        // response = response.features;
+        response.forEach((item) => {
+          // if (building.geometry.type === "Polygon") {
+          //   building.geometry.coordinates.forEach((coordinates) => {
+          //     createPolygon(coordinates, map);
+          //   });
+          // }
+          const [lat, long] = item;
+          if (
+            lat >= 29.628179 &&
+            lat <= 29.652244 &&
+            long >= -82.372585 &&
+            long <= -82.339005
+          ) {
+            const boundsBorder = createCirclePushpin(
+              new Microsoft.Maps.Location(lat, long),
+              3,
+              "rgba(226, 24, 24, 0.6)"
+            );
+            map.entities.push(boundsBorder);
+          }
+        });
+      }
+
       function GetMap() {
+        // var bounds = Microsoft.Maps.LocationRect.fromLocations(
+        //   new Microsoft.Maps.Location(29.652679, -82.37579),
+        //   new Microsoft.Maps.Location(29.629072, -82.338049)
+        // );
         var bounds = Microsoft.Maps.LocationRect.fromLocations(
-          new Microsoft.Maps.Location(29.652679, -82.37579),
-          new Microsoft.Maps.Location(29.629072, -82.338049)
+          new Microsoft.Maps.Location(29.652244, -82.372585),
+          new Microsoft.Maps.Location(29.628179, -82.339005)
         );
 
         var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
@@ -128,8 +262,12 @@
           //   },
           // },
         });
-        getZone(map);
+        // getZone(map);
         // getPolygon(map);
+        getSearch(map);
+        getBLP(map);
+        getBusStops(map);
+        getCrimes(map);
         let pointMap = [];
         Microsoft.Maps.Events.addHandler(map, "click", function (e) {
           const location = e.location;
