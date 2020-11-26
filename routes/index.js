@@ -39,6 +39,11 @@ router.get('/blp', async (req, res) => {
 
 });
 
+router.post('/save', async (req, res) => {
+    console.log('In save');
+    console.log(req.body);
+    // res.send('Done');
+});
 
 router.get('/search', async (req, res) => {
 
@@ -109,6 +114,21 @@ router.get('/crimes', async (req, res) => {
 
 
 });
+
+router.get('/bounds', async (req, res) => {
+
+    fs.readFile(path.resolve(__dirname, "../json/bounds_crimes.json"), function (err, data) {
+
+        // Check for errors 
+        if (err) throw err;
+
+        let bounds = JSON.parse(data);
+        res.send(bounds);
+    });
+
+
+});
+
 router.get('/polygons', async (req, res) => {
 
     // let rawdata = fs.readFileSync('./json/search.json');

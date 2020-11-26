@@ -16,7 +16,85 @@
     <div id="printoutPanel"></div>
 
     <div id="myMap" style="width: 100vw; height: 100vh"></div>
+    <style>
+      .mapContainer {
+          position:relative;
+          width:800px;
+          height:600px;
+      }
+
+      #map {
+          position:relative;
+          width:800px;
+          height:600px;
+      }
+
+      .legend {
+          position:absolute;
+          top:5px;
+          left:5px;
+          width:256px;
+          height:35px;
+          font-family:Arial;
+          font-size:12px;
+          background-color:rgba(255, 255, 255, 0.8);
+          border-radius:5px;
+          padding:5px;
+      }
+
+      #legendCanvas {
+          width:256px;
+          height:15px;
+      }
+
+      .legend-max {
+          float:right;
+      }
+  </style>
+    <div class="legend">
+      <canvas id="legendCanvas"></canvas>
+      <span class="legend-min">0</span>
+      <span class="legend-max">1182</span>
+  </div>
     <script type="text/javascript">
+
+function createLegend(maxValue) {
+        var canvas = document.getElementById('legendCanvas');
+        var ctx = canvas.getContext('2d');
+
+        //Create a linear gradient for the legend. 
+        var colorGradient = {
+            "0.00": 'rgba(0,255,0,255)',    // Green
+            "0.50": 'rgba(255,255,0,255)',  // Yellow
+            "1.00": 'rgba(255,0,0,255)'     // Red
+        };
+
+        var grd = ctx.createLinearGradient(0, 0, 256, 0);
+        for (var c in colorGradient) {
+            grd.addColorStop(c, colorGradient[c]);
+        }
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        //Store the pixel information from the legend.
+        heatGradientData = ctx.getImageData(0, 0, canvas.width, 1);
+    }
+
+    function getLegendColor(value, maxValue) {
+        value = (value > maxValue) ? maxValue : value;
+
+        //Calculate the pixel data index from the ratio of value/maxValue.
+        var idx = Math.round((value / maxValue) * 256) * 4 - 4;
+
+        if (idx < 0) {
+            idx = 0;
+        }
+
+        //Create an RGBA color from the pixel data at the calculated index.
+        return 'rgba('+ heatGradientData.data[idx]+ ',' +
+            heatGradientData.data[idx + 1] + ',' +
+            heatGradientData.data[idx + 2] + ',' + '0.5)';
+    }
       var building = {};
 
       function getData(url, headers) {
@@ -37,6 +115,27 @@
         });
       }
 
+      function postData(url, headers, data = {}) {
+        return new Promise((resolve, reject) => {
+          // console.log(JSON.stringify(data));
+          fetch(url, {
+            mode: "cors",
+            header: headers,
+            method: "POST",
+            body: JSON.stringify(data)
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              resolve(data);
+            })
+            .catch((error) => {
+              console.log("Error: \n");
+              console.log(error);
+              reject(error);
+            });
+        });
+      }
+
       function createPolygon(points, map) {
         var polyData = [];
         points.forEach((point) => {
@@ -50,7 +149,7 @@
         map.entities.push(polygon);
       }
 
-      async function getZone(map) {
+      async function getBuildings(map) {
         const myHeaders = new Headers();
         let response = await getData("http://localhost:3000/api/buildings", {
           "Content-Type": "application/json",
@@ -68,30 +167,64 @@
       }
 
       // init();
-
-      function createBox(x1, y1, x2, y2) {
-        var bounds = Microsoft.Maps.LocationRect.fromLocations(
-          new Microsoft.Maps.Location(x1, y1),
-          new Microsoft.Maps.Location(x2, y2)
-        );
-        var boundsBorder = new Microsoft.Maps.Polyline(
-          [
-            bounds.getNorthwest(),
-            new Microsoft.Maps.Location(
-              bounds.getNorthwest().latitude,
-              bounds.getSoutheast().longitude
-            ),
-            bounds.getSoutheast(),
-            new Microsoft.Maps.Location(
-              bounds.getSoutheast().latitude,
-              bounds.getNorthwest().longitude
-            ),
-            bounds.getNorthwest(),
-          ],
-          { strokeColor: "blue", strokeThickness: 1 }
-        );
-        return boundsBorder;
+      async function getZone(map) {
+        const myHeaders = new Headers();
+        let response = await getData("http://localhost:3000/api/bounds", {
+          "Content-Type": "application/json",
+        });
+        
+        response.forEach((zone) => {
+          // response.forEach((item) => {
+              createZone(map, zone)
+              // createPolygon(coordinates, map);
+            });
+        
+          // createPolygon(item.zone, map);
+        
       }
+      function createZone(map, zone) {
+        console.log(zone.northwest_lat, zone.northwest_lon);
+        console.log(new Microsoft.Maps.Location(zone.northwest_lat, zone.northwest_lon));
+        var bounds = Microsoft.Maps.LocationRect.fromLocations(
+          [new Microsoft.Maps.Location(zone.northwest_lat, zone.northwest_lon),
+          new Microsoft.Maps.Location(zone.southeast_lat, zone.southeast_lon)]
+        );
+        Microsoft.Maps.loadModule('Microsoft.Maps.SpatialMath', function () {
+          var polygon = Microsoft.Maps.SpatialMath.locationRectToPolygon(bounds);
+          polygon.setOptions({fillColor: getLegendColor(zone.crimes, 1182)});
+          // console.log(polygon);
+          map.entities.push(polygon);
+        })
+        // console.log(boundsCoordinates);
+        
+        // boundsCoordinates = [bounds.getNorthwest().latitude, bounds.getNorthwest().longitude, bounds.getSoutheast().latitude, bounds.getSoutheast().longitude];
+        // return boundsCoordinates;
+
+      }
+
+      // function createBox(x1, y1, x2, y2) {
+      //   var bounds = Microsoft.Maps.LocationRect.fromLocations(
+      //     new Microsoft.Maps.Location(x1, y1),
+      //     new Microsoft.Maps.Location(x2, y2)
+      //   );
+      //   var boundsBorder = new Microsoft.Maps.Polyline(
+      //     [
+      //       bounds.getNorthwest(),
+      //       new Microsoft.Maps.Location(
+      //         bounds.getNorthwest().latitude,
+      //         bounds.getSoutheast().longitude
+      //       ),
+      //       bounds.getSoutheast(),
+      //       new Microsoft.Maps.Location(
+      //         bounds.getSoutheast().latitude,
+      //         bounds.getNorthwest().longitude
+      //       ),
+      //       bounds.getNorthwest(),
+      //     ],
+      //     { strokeColor: "blue", strokeThickness: 1 }
+      //   );
+      //   return boundsBorder;
+      // }
       async function getPolygon(map) {
         let response = await getData("http://localhost:3000/api/polygons", {
           "Content-Type": "application/json",
@@ -233,7 +366,15 @@
         });
       }
 
+      async function saveCoordinates(boundsCoordinatesList) {
+        let response = await postData("http://localhost:3000/api/save", {
+          "Content-Type": "application/json",
+        }, {boundsCoordinatesList: boundsCoordinatesList});
+        console.log(response);
+      }
+
       function GetMap() {
+        createLegend(0.655127);
         // var bounds = Microsoft.Maps.LocationRect.fromLocations(
         //   new Microsoft.Maps.Location(29.652679, -82.37579),
         //   new Microsoft.Maps.Location(29.629072, -82.338049)
@@ -318,11 +459,15 @@
           "<b>Location to point2</b> <br>" +
           point2;
         map.entities.push(boundsBorder);
-        for (var x = point1.x; x <= point2.x; x += 16) {
-          for (var y = point1.y; y <= point2.y; y += 16) {
-            createBox(map, x, y);
-          }
-        }
+        // boundsCoordinatesList = []
+        // for (var x = point1.x; x <= point2.x; x += 16) {
+        //   for (var y = point1.y; y <= point2.y; y += 16) {
+        //     createBox(map, x, y);
+        //   }
+        // }
+        // console.log(boundsCoordinatesList);
+        // saveCoordinates(boundsCoordinatesList);
+        getZone(map);
         // Binding the events
         Microsoft.Maps.Events.addHandler(map, "viewchange", function () {
           document.getElementById("printoutPanel").innerHTML =
@@ -332,35 +477,29 @@
           document.getElementById("printoutPanel").innerHTML = "View changed.";
         });
       }
-      function createBox(map, x, y) {
-        var bounds = Microsoft.Maps.LocationRect.fromLocations(
-          map.tryPixelToLocation(
-            new Microsoft.Maps.Point(x, y),
-            Microsoft.Maps.PixelReference.control
-          ),
-          map.tryPixelToLocation(
-            new Microsoft.Maps.Point(x + 16, y + 16),
-            Microsoft.Maps.PixelReference.control
-          )
-        );
-        var boundsBorder = new Microsoft.Maps.Polyline(
-          [
-            bounds.getNorthwest(),
-            new Microsoft.Maps.Location(
-              bounds.getNorthwest().latitude,
-              bounds.getSoutheast().longitude
-            ),
-            bounds.getSoutheast(),
-            new Microsoft.Maps.Location(
-              bounds.getSoutheast().latitude,
-              bounds.getNorthwest().longitude
-            ),
-            bounds.getNorthwest(),
-          ],
-          { strokeColor: "blue", strokeThickness: 1 }
-        );
-        map.entities.push(boundsBorder);
-      }
+      // function createBox(map, x, y) {
+      //   var bounds = Microsoft.Maps.LocationRect.fromLocations(
+      //     map.tryPixelToLocation(
+      //       new Microsoft.Maps.Point(x, y),
+      //       Microsoft.Maps.PixelReference.control
+      //     ),
+      //     map.tryPixelToLocation(
+      //       new Microsoft.Maps.Point(x + 16, y + 16),
+      //       Microsoft.Maps.PixelReference.control
+      //     )
+      //   );
+      //   Microsoft.Maps.loadModule('Microsoft.Maps.SpatialMath', function () {
+      //     var polygon = Microsoft.Maps.SpatialMath.locationRectToPolygon(bounds);
+          
+      //     map.entities.push(polygon);
+      //   })
+      //   // console.log(boundsCoordinates);
+        
+      //   // boundsCoordinates = [bounds.getNorthwest().latitude, bounds.getNorthwest().longitude, bounds.getSoutheast().latitude, bounds.getSoutheast().longitude];
+      //   // return boundsCoordinates;
+
+      // }
+      
     </script>
     <script
       type="text/javascript"
