@@ -2,6 +2,8 @@ const router = require('express').Router();
 const fs = require('fs');
 const path = require('path');
 
+const NUM_COLS = 49;
+
 router.get('/zone', async (req, res) => {
 
     // let rawdata = fs.readFileSync('./json/search.json');
@@ -118,12 +120,18 @@ router.get('/crimes', async (req, res) => {
 router.get('/bounds', async (req, res) => {
 
     fs.readFile(path.resolve(__dirname, "../json/bounds_crimes.json"), function (err, data) {
-
+    
         // Check for errors 
         if (err) throw err;
 
         let bounds = JSON.parse(data);
-        res.send(bounds);
+        output = {}
+        output.meta = {}
+        output.zone_matrix = listToMatrix(bounds, NUM_COLS);
+        output.meta.cols = NUM_COLS;
+        output.meta.rows = output.zone_matrix.length;
+        
+        res.send(output);
     });
 
 
@@ -146,5 +154,20 @@ router.get('/polygons', async (req, res) => {
 
 
 });
+
+function listToMatrix(list, elementsPerSubArray) {
+    var matrix = [], i, k;
+
+    for (i = 0, k = -1; i < list.length; i++) {
+        if (i % elementsPerSubArray === 0) {
+            k++;
+            matrix[k] = [];
+        }
+
+        matrix[k].push(list[i]);
+    }
+
+    return matrix;
+}
 
 module.exports = router;

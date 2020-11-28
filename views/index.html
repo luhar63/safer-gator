@@ -81,6 +81,7 @@ function createLegend(maxValue) {
     }
 
     function getLegendColor(value, maxValue) {
+        value += 8
         value = (value > maxValue) ? maxValue : value;
 
         //Calculate the pixel data index from the ratio of value/maxValue.
@@ -173,14 +174,14 @@ function createLegend(maxValue) {
           "Content-Type": "application/json",
         });
         
-        response.forEach((zone) => {
-          // response.forEach((item) => {
+        NUM_COLS = response.cols;
+        NUM_ROWS = response.rows;
+        response.zone_matrix.forEach((row) => 
+          row.forEach (
+            (zone) => {
               createZone(map, zone)
-              // createPolygon(coordinates, map);
-            });
-        
-          // createPolygon(item.zone, map);
-        
+            })
+          );
       }
       function createZone(map, zone) {
         console.log(zone.northwest_lat, zone.northwest_lon);
@@ -191,7 +192,9 @@ function createLegend(maxValue) {
         );
         Microsoft.Maps.loadModule('Microsoft.Maps.SpatialMath', function () {
           var polygon = Microsoft.Maps.SpatialMath.locationRectToPolygon(bounds);
-          polygon.setOptions({fillColor: getLegendColor(zone.crimes, 1182)});
+          polygon.setOptions({  
+            strokeColor: "transparent",
+            fillColor: zone.safety_index === -5 ? 'rgb(128,128,128, 0.25)': getLegendColor(zone.safety_index, 18)});
           // console.log(polygon);
           map.entities.push(polygon);
         })
@@ -385,9 +388,10 @@ function createLegend(maxValue) {
         );
 
         var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
-          maxBounds: bounds,
+          // maxBounds: bounds,
           // disableStreetside: true,
-          center: new Microsoft.Maps.Location(29.652679, -82.37579),
+          center: new Microsoft.Maps.Location(29.64018522838967, -82.35579516657155),
+          zoom: 15
           // customMapStyle: {
           //   elements: {
           //     area: { fillColor: "#b6e591" },
@@ -405,26 +409,26 @@ function createLegend(maxValue) {
         });
         // getZone(map);
         // getPolygon(map);
-        getSearch(map);
-        getBLP(map);
-        getBusStops(map);
-        getCrimes(map);
+        // getSearch(map);
+        // getBLP(map);
+        // getBusStops(map);
+        // getCrimes(map);
         let pointMap = [];
-        Microsoft.Maps.Events.addHandler(map, "click", function (e) {
-          const location = e.location;
-          pointMap.push([location.latitude, location.longitude]);
-          var polyData = [];
-          pointMap.forEach((element) => {
-            [lat, long] = element;
-            polyData.push(new Microsoft.Maps.Location(lat, long));
-          });
-          var polygon = new Microsoft.Maps.Polygon(polyData);
-          map.entities.push(polygon);
-          polygon.setOptions({
-            fillColor: "transparent",
-          });
-          console.log(JSON.stringify(pointMap));
-        });
+        // Microsoft.Maps.Events.addHandler(map, "click", function (e) {
+        //   const location = e.location;
+        //   pointMap.push([location.latitude, location.longitude]);
+        //   var polyData = [];
+        //   pointMap.forEach((element) => {
+        //     [lat, long] = element;
+        //     polyData.push(new Microsoft.Maps.Location(lat, long));
+        //   });
+        //   var polygon = new Microsoft.Maps.Polygon(polyData);
+        //   map.entities.push(polygon);
+        //   polygon.setOptions({
+        //     fillColor: "transparent",
+        //   });
+        //   console.log(JSON.stringify(pointMap));
+        // });
         // }
 
         document.getElementById("printoutPanel").innerHTML = "View changed.";
@@ -442,7 +446,7 @@ function createLegend(maxValue) {
             ),
             bounds.getNorthwest(),
           ],
-          { strokeColor: "transparent", strokeThickness: 5 }
+          { strokeColor: "transparent", strokeThickness: 1 }
         );
         var point1 = map.tryLocationToPixel(
           bounds.getNorthwest(),
