@@ -126,6 +126,7 @@ router.get('/bounds', async (req, res) => {
 
         let bounds = JSON.parse(data);
         output = {}
+        output.zone_array = bounds;
         output.meta = {}
         output.zone_matrix = listToMatrix(bounds, NUM_COLS);
         output.meta.cols = NUM_COLS;
