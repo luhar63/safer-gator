@@ -3,6 +3,7 @@
   <head>
     <title>addeventhandlerHTML</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"/>
     <style type="text/css">
       body {
         margin: 0;
@@ -11,6 +12,7 @@
         font-family: "Segoe UI", Helvetica, Arial, Sans-Serif;
       }
     </style>
+    <script type="text/javascript" src="main.js"></script> </script>
   </head>
   <body>
     <div id="printoutPanel"></div>
@@ -18,193 +20,108 @@
     <div id="myMap" style="width: 100vw; height: 100vh"></div>
     <style>
       .mapContainer {
-          position:relative;
-          width:800px;
-          height:600px;
+        position: relative;
+        width: 800px;
+        height: 600px;
       }
 
       #map {
-          position:relative;
-          width:800px;
-          height:600px;
+        position: relative;
+        width: 800px;
+        height: 600px;
       }
 
       .legend {
-          position:absolute;
-          top:5px;
-          left:5px;
-          width:256px;
-          height:35px;
-          font-family:Arial;
-          font-size:12px;
-          background-color:rgba(255, 255, 255, 0.8);
-          border-radius:5px;
-          padding:5px;
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: 256px;
+        height: 35px;
+        font-family: Arial;
+        font-size: 12px;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 5px;
+        padding: 5px;
       }
 
       #legendCanvas {
-          width:256px;
-          height:15px;
+        width: 256px;
+        height: 15px;
       }
 
       .legend-max {
-          float:right;
+        float: right;
       }
-  </style>
+    </style>
     <div class="legend">
       <canvas id="legendCanvas"></canvas>
       <span class="legend-min">0</span>
       <span class="legend-max">1182</span>
-  </div>
+    </div>
     <script type="text/javascript">
+      function createLegend(maxValue) {
+        var canvas = document.getElementById("legendCanvas");
+        var ctx = canvas.getContext("2d");
 
-function createLegend(maxValue) {
-        var canvas = document.getElementById('legendCanvas');
-        var ctx = canvas.getContext('2d');
-
-        //Create a linear gradient for the legend. 
+        //Create a linear gradient for the legend.
         var colorGradient = {
-            "0.00": 'rgba(0,255,0,255)',    // Green
-            "0.50": 'rgba(255,255,0,255)',  // Yellow
-            "1.00": 'rgba(255,0,0,255)'     // Red
+          "0.00": "rgba(0,255,0,255)", // Green
+          "0.50": "rgba(255,255,0,255)", // Yellow
+          "1.00": "rgba(255,0,0,255)", // Red
         };
 
         var grd = ctx.createLinearGradient(0, 0, 256, 0);
         for (var c in colorGradient) {
-            grd.addColorStop(c, colorGradient[c]);
+          grd.addColorStop(c, colorGradient[c]);
         }
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         //Store the pixel information from the legend.
         heatGradientData = ctx.getImageData(0, 0, canvas.width, 1);
-    }
+      }
 
-    function getLegendColor(value, maxValue) {
-        value += 8
-        value = (value > maxValue) ? maxValue : value;
+      function getLegendColor(value, maxValue) {
+        value += 8;
+        value = value > maxValue ? maxValue : value;
 
         //Calculate the pixel data index from the ratio of value/maxValue.
         var idx = Math.round((value / maxValue) * 256) * 4 - 4;
 
         if (idx < 0) {
-            idx = 0;
+          idx = 0;
         }
 
         //Create an RGBA color from the pixel data at the calculated index.
-        return 'rgba('+ heatGradientData.data[idx]+ ',' +
-            heatGradientData.data[idx + 1] + ',' +
-            heatGradientData.data[idx + 2] + ',' + '0.5)';
-    }
+        return (
+          "rgba(" +
+          heatGradientData.data[idx] +
+          "," +
+          heatGradientData.data[idx + 1] +
+          "," +
+          heatGradientData.data[idx + 2] +
+          "," +
+          "0.5)"
+        );
+      }
       var building = {};
 
-      function getData(url, headers) {
-        return new Promise((resolve, reject) => {
-          fetch(url, {
-            mode: "cors",
-            header: headers,
-            method: "GET",
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              resolve(data);
-            })
-            .catch((error) => {
-              console.log("Error: \n");
-              reject(error);
-            });
-        });
-      }
-
-      function postData(url, headers, data = {}) {
-        return new Promise((resolve, reject) => {
-          // console.log(JSON.stringify(data));
-          fetch(url, {
-            mode: "cors",
-            header: headers,
-            method: "POST",
-            body: JSON.stringify(data)
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              resolve(data);
-            })
-            .catch((error) => {
-              console.log("Error: \n");
-              console.log(error);
-              reject(error);
-            });
-        });
-      }
-
-      function createPolygon(points, map) {
-        var polyData = [];
-        points.forEach((point) => {
-          const [long, lat] = point;
-          polyData.push(new Microsoft.Maps.Location(lat, long));
-        });
-        var polygon = new Microsoft.Maps.Polygon(polyData);
-        polygon.setOptions({
-          fillColor: "#96ef942b",
-        });
-        map.entities.push(polygon);
-      }
-
       async function getBuildings(map) {
-        const myHeaders = new Headers();
-        let response = await getData("http://localhost:3000/api/buildings", {
-          "Content-Type": "application/json",
-        });
-        const buildings = response.features;
-        buildings.forEach((item) => {
-          // response.forEach((item) => {
-          if (item.geometry.type === "Polygon") {
-            item.geometry.coordinates.forEach((coordinates) => {
-              createPolygon(coordinates, map);
-            });
-          }
-          // createPolygon(item.zone, map);
-        });
+          const myHeaders = new Headers();
+          let response = await getData("http://localhost:3000/api/buildings", {
+              "Content-Type": "application/json",
+          });
+          const buildings = response.features;
+          buildings.forEach((item) => {
+              // response.forEach((item) => {
+              if (item.geometry.type === "Polygon") {
+                  item.geometry.coordinates.forEach((coordinates) => {
+                      createPolygon(coordinates, map);
+                  });
+              }
+              // createPolygon(item.zone, map);
+          });
       }
-
-      // init();
-      async function getZone(map) {
-        const myHeaders = new Headers();
-        let response = await getData("http://localhost:3000/api/bounds", {
-          "Content-Type": "application/json",
-        });
-        
-        NUM_COLS = response.cols;
-        NUM_ROWS = response.rows;
-        response.zone_matrix.forEach((row) => 
-          row.forEach (
-            (zone) => {
-              createZone(map, zone)
-            })
-          );
-      }
-      function createZone(map, zone) {
-        console.log(zone.northwest_lat, zone.northwest_lon);
-        console.log(new Microsoft.Maps.Location(zone.northwest_lat, zone.northwest_lon));
-        var bounds = Microsoft.Maps.LocationRect.fromLocations(
-          [new Microsoft.Maps.Location(zone.northwest_lat, zone.northwest_lon),
-          new Microsoft.Maps.Location(zone.southeast_lat, zone.southeast_lon)]
-        );
-        Microsoft.Maps.loadModule('Microsoft.Maps.SpatialMath', function () {
-          var polygon = Microsoft.Maps.SpatialMath.locationRectToPolygon(bounds);
-          polygon.setOptions({  
-            strokeColor: "transparent",
-            fillColor: zone.safety_index === -5 ? 'rgb(128,128,128, 0.25)': getLegendColor(zone.safety_index, 18)});
-          // console.log(polygon);
-          map.entities.push(polygon);
-        })
-        // console.log(boundsCoordinates);
-        
-        // boundsCoordinates = [bounds.getNorthwest().latitude, bounds.getNorthwest().longitude, bounds.getSoutheast().latitude, bounds.getSoutheast().longitude];
-        // return boundsCoordinates;
-
-      }
-
       // function createBox(x1, y1, x2, y2) {
       //   var bounds = Microsoft.Maps.LocationRect.fromLocations(
       //     new Microsoft.Maps.Location(x1, y1),
@@ -242,139 +159,7 @@ function createLegend(maxValue) {
           map.entities.push(boundsBorder);
         });
       }
-      function createCirclePushpin(
-        location,
-        radius,
-        fillColor,
-        strokeColor,
-        strokeWidth
-      ) {
-        if (strokeColor === void 0) {
-          strokeColor = "";
-        }
-        if (strokeWidth === void 0) {
-          strokeWidth = 0;
-        }
-        //Create an SVG string of a circle with the specified radius and color.
-        var svg =
-          '<svg xmlns="http://www.w3.org/2000/svg" width="' +
-          2 * radius +
-          '" height="' +
-          2 * radius +
-          '">\n        <circle cx="' +
-          radius +
-          '" cy="' +
-          radius +
-          '" r="' +
-          (radius - strokeWidth) +
-          '" stroke="' +
-          strokeColor +
-          '" stroke-width="' +
-          strokeWidth +
-          '" fill="' +
-          fillColor +
-          '"/></svg>';
-        //Create a pushpin from the SVG and anchor it to the center of the circle.
-        return new Microsoft.Maps.Pushpin(location, {
-          icon: svg,
-          anchor: new Microsoft.Maps.Point(radius, radius),
-        });
-      }
-      async function getBLP(map) {
-        let response = await getData("http://localhost:3000/api/blp", {
-          "Content-Type": "application/json",
-        });
-        response = response.features;
-        response.forEach((item) => {
-          // if (building.geometry.type === "Polygon") {
-          //   building.geometry.coordinates.forEach((coordinates) => {
-          //     createPolygon(coordinates, map);
-          //   });
-          // }
-          const [long, lat] = item.geometry.coordinates;
-          const boundsBorder = createCirclePushpin(
-            new Microsoft.Maps.Location(lat, long),
-            3,
-            "rgba(0, 0, 255, 0.5)"
-          );
-          map.entities.push(boundsBorder);
-        });
-      }
-      async function getSearch(map) {
-        let response = await getData("http://localhost:3000/api/search", {
-          "Content-Type": "application/json",
-        });
-        response.forEach((item) => {
-          // if (building.geometry.type === "Polygon") {
-          //   building.geometry.coordinates.forEach((coordinates) => {
-          //     createPolygon(coordinates, map);
-          //   });
-          // }
-          if (item.JTYPE == "BLDG" && item.LAT && item.LON) {
-            const boundsBorder = createCirclePushpin(
-              new Microsoft.Maps.Location(item.LAT, item.LON),
-              3,
-              "rgba(180, 73, 199, 0.4)"
-            );
-            map.entities.push(boundsBorder);
-          }
-        });
-      }
-
-      async function getBusStops(map) {
-        let response = await getData("http://localhost:3000/api/bus_stops", {
-          "Content-Type": "application/json",
-        });
-        response = response.features;
-        response.forEach((item) => {
-          // if (building.geometry.type === "Polygon") {
-          //   building.geometry.coordinates.forEach((coordinates) => {
-          //     createPolygon(coordinates, map);
-          //   });
-          // }
-          const [long, lat] = item.geometry.coordinates;
-          const boundsBorder = createCirclePushpin(
-            new Microsoft.Maps.Location(lat, long),
-            3,
-            "rgba(0, 0, 0, 0.5)"
-          );
-          map.entities.push(boundsBorder);
-        });
-      }
-      async function getCrimes(map) {
-        let response = await getData("http://localhost:3000/api/crimes", {
-          "Content-Type": "application/json",
-        });
-        // response = response.features;
-        response.forEach((item) => {
-          // if (building.geometry.type === "Polygon") {
-          //   building.geometry.coordinates.forEach((coordinates) => {
-          //     createPolygon(coordinates, map);
-          //   });
-          // }
-          const [lat, long] = item;
-          if (
-            lat >= 29.528179 &&
-            lat <= 29.752244 &&
-            long >= -82.372585 &&
-            long <= -82.339005
-          ) {
-            const boundsBorder = createCirclePushpin(
-              new Microsoft.Maps.Location(lat, long),
-              3,
-              "rgba(226, 24, 24, 0.6)"
-            );
-            map.entities.push(boundsBorder);
-          }
-        });
-      }
-
-      async function saveCoordinates(boundsCoordinatesList) {
-        let response = await postData("http://localhost:3000/api/save", {
-          "Content-Type": "application/json",
-        }, {boundsCoordinatesList: boundsCoordinatesList});
-        console.log(response);
-      }
+      
 
       function GetMap() {
         createLegend(0.655127);
@@ -389,9 +174,12 @@ function createLegend(maxValue) {
 
         var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
           // maxBounds: bounds,
-          // disableStreetside: true,
-          center: new Microsoft.Maps.Location(29.64018522838967, -82.35579516657155),
-          zoom: 15
+          disableStreetside: true,
+          center: new Microsoft.Maps.Location(
+            29.64018522838967,
+            -82.35579516657155
+          ),
+          zoom: 15,
           // customMapStyle: {
           //   elements: {
           //     area: { fillColor: "#b6e591" },
@@ -472,6 +260,7 @@ function createLegend(maxValue) {
         // console.log(boundsCoordinatesList);
         // saveCoordinates(boundsCoordinatesList);
         getZone(map);
+        simulateGPSWithClick(map);
         // Binding the events
         Microsoft.Maps.Events.addHandler(map, "viewchange", function () {
           document.getElementById("printoutPanel").innerHTML =
@@ -494,16 +283,15 @@ function createLegend(maxValue) {
       //   );
       //   Microsoft.Maps.loadModule('Microsoft.Maps.SpatialMath', function () {
       //     var polygon = Microsoft.Maps.SpatialMath.locationRectToPolygon(bounds);
-          
+
       //     map.entities.push(polygon);
       //   })
       //   // console.log(boundsCoordinates);
-        
+
       //   // boundsCoordinates = [bounds.getNorthwest().latitude, bounds.getNorthwest().longitude, bounds.getSoutheast().latitude, bounds.getSoutheast().longitude];
       //   // return boundsCoordinates;
 
       // }
-      
     </script>
     <script
       type="text/javascript"

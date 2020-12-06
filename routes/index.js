@@ -120,18 +120,21 @@ router.get('/crimes', async (req, res) => {
 router.get('/bounds', async (req, res) => {
 
     fs.readFile(path.resolve(__dirname, "../json/bounds_crimes.json"), function (err, data) {
-    
+
         // Check for errors 
         if (err) throw err;
+        // var lats = new Set();
+        // var longs = new Set();
 
         let bounds = JSON.parse(data);
+
         output = {}
-        output.zone_array = bounds;
+        // output.zone_array = bounds;
         output.meta = {}
         output.zone_matrix = listToMatrix(bounds, NUM_COLS);
         output.meta.cols = NUM_COLS;
         output.meta.rows = output.zone_matrix.length;
-        
+
         res.send(output);
     });
 
