@@ -34,11 +34,11 @@ function getGPSZone(lat, long) {
 function nearestSafeZone(x, y, type = 'zone') {
     var k = 0;
     var safePlaces = [];
-    while (true) {
+    while (true && k < 5) {
         for (var i = x - k; i <= x + k; i++) {
             for (var j = y - k; j <= y + k; j++) {
                 if (i == x - k || i == x + k || j == y - k || j == y + k) {
-                    if (i >= 0 && j >= 0 && i <= NUM_ROWS && j <= NUM_COLS && MATRIX[i][j]) {
+                    if (i >= 0 && j >= 0 && i <= NUM_ROWS && j <= NUM_COLS && MATRIX[i] && MATRIX[i][j]) {
                         if (type === 'blp') {
                             if (MATRIX[i][j].blp_count > 0) {
                                 safePlaces = safePlaces.concat(MATRIX[i][j].blp);
@@ -329,7 +329,9 @@ async function getClosestSafeCenterLocation(startLocation, safeZones) {
 
 }
 
+
 async function simulateGPSWithClick(type) {
+    clearInfobox();
     map = window.mapInstance;
     const location = window.gpsLoc;
     const { x, y } = getGPSZone(location.latitude, location.longitude);
@@ -351,13 +353,30 @@ async function simulateGPSWithClick(type) {
         directionsManager.calculateDirections();
     });
 }
+
+function clearInfobox() {
+    if (INFOBOX != null) {
+        INFOBOX.setMap(null);
+    }
+}
+
+function clearPushpins() {
+    map = window.mapInstance;
+    for (var i = map.entities.getLength() - 1; i >= 0; i--) {
+        var pushpin = map.entities.get(i);
+        if (pushpin instanceof Microsoft.Maps.Pushpin) {
+            map.entities.removeAt(i);
+        }
+    }
+}
 function simulateBlpSearchClick(type) {
+    clearInfobox();
     map = window.mapInstance;
     Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {
         const location = window.gpsLoc;
         const { x, y } = getGPSZone(location.latitude, location.longitude);
         var blpLocations = nearestSafeZone(x, y, type);
-
+        clearPushpins();
         blpLocations.forEach((blpLoc) => {
             // console.log('blp', blpLoc[0], blpLoc[1]);
             var loc = new Microsoft.Maps.Location(blpLoc[0], blpLoc[1]);
@@ -489,6 +508,7 @@ function createOverlay() {
         this.navigate.setAttribute("data-toggle", "tooltip");
         this.navigate.setAttribute("data-placement", "top");
 
+
         this.drawer = document.createElement('button');
         this.drawer.innerHTML = `<i class="fas fa-align-justify"></i>`;
         this.drawer.classList.add('round-btn');
@@ -496,6 +516,7 @@ function createOverlay() {
         // this.navigate.setAttribute("title", "Take me to a safer place");
         this.drawer.onclick = function () {
             openNav();
+            clearInfobox();
         };
 
         // this.gotoAccessPoint = document.createElement('button');
