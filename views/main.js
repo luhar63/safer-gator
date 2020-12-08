@@ -30,15 +30,22 @@ function getGPSZone(lat, long) {
     return { x, y };
 }
 
-function nearestSafeZone(x, y) {
+function nearestSafeZone(x, y, blp = false) {
     var k = 0;
     var safePlaces = [];
     while (true) {
         for (var i = x - k; i <= x + k; i++) {
             for (var j = y - k; j <= y + k; j++) {
                 if (i == x - k || i == x + k || j == y - k || j == y + k) {
-                    if (i <= NUM_ROWS && j <= NUM_COLS && MATRIX[i][j] && MATRIX[i][j].safety_index < -5) {
-                        safePlaces.push(MATRIX[i][j]);
+                    if (i <= NUM_ROWS && j <= NUM_COLS && MATRIX[i][j]){
+                        if (blp) {
+                             if (MATRIX[i][j].blp.length > 0){
+                                safePlaces = safePlaces.concat(MATRIX[i][j].blp);
+                             }
+                        }
+                        else if (MATRIX[i][j].safety_index < -5){
+                            safePlaces.push(MATRIX[i][j]);
+                        }
                     }
                 }
             }
@@ -342,6 +349,48 @@ function simulateGPSWithClick(map) {
     });
 }
 
+function simulateBlpSearchClick(map) {
+    Microsoft.Maps.Events.addHandler(map, "click", async function (e) {
+        Microsoft.Maps.loadModule('Microsoft.Maps.Directions', function () {
+        const location = e.location;
+        const { x, y } = getGPSZone(location.latitude, location.longitude);
+        var blpLocations = nearestSafeZone(x, y, true);
+        
+        blpLocations.forEach((blpLoc) => {
+            console.log('blp', blpLoc[0], blpLoc[1]);
+            var loc = new Microsoft.Maps.Location(blpLoc[0], blpLoc[1]);
+            console.log(loc)
+            var blpPin = new Microsoft.Maps.Pushpin(loc, { visible: true });
+            map.entities.push(blpPin);
+
+            Microsoft.Maps.Events.addHandler(blpPin, 'click', function (e) 
+            { 
+                console.log('pushpin clicked'); 
+                
+                    navigator.geolocation.getCurrentPosition(function (pos) {
+                        
+                        var directionsManager = new Microsoft.Maps.Directions.DirectionsManager(map);
+                        // Set Route Mode to walking
+                        directionsManager.setRequestOptions({ routeMode: Microsoft.Maps.Directions.RouteMode.walking });
+                        var waypoint1 = new Microsoft.Maps.Directions.Waypoint({ location: e.location });
+                        var waypoint2 = new Microsoft.Maps.Directions.Waypoint({ location: new Microsoft.Maps.Location(pos.coords.latitude, pos.coords.longitude) });
+                        directionsManager.addWaypoint(waypoint1);
+                        directionsManager.addWaypoint(waypoint2);
+                        // Set the element in which the itinerary will be rendered
+                        directionsManager.setRenderOptions({ itineraryContainer: document.getElementById('printoutPanel'), firstWaypointPushpinOptions: { text: "You" } });
+                        console.log(directionsManager);
+                        directionsManager.calculateDirections();
+                    });
+                    
+                });
+                
+
+            });
+            
+        })
+    });
+}
+
 function createZone(map, zone) {
     // console.log(zone.northwest_lat, zone.northwest_lon);
     // console.log(
@@ -364,6 +413,21 @@ function createZone(map, zone) {
         });
         // console.log(polygon);
         map.entities.push(polygon);
+        Microsoft.Maps.Events.addHandler(polygon, 'click', function (e) 
+            { 
+                console.log('polygon clicked'); 
+                var infobox = new Microsoft.Maps.Infobox(new Microsoft.Maps.Location(zone.zone_center[0], zone.zone_center[1]), {
+                    title: 'Zone Info',
+                    showCloseButton: true,
+                    description: `Crimes: ${zone.crimes} 
+                    \n BluePhone: ${zone.blp_count>0? 'Yes': 'No'}
+                    \n SNAP stop: ${zone.snap_count>0? 'Yes': 'No'}`,
+                    maxWidth: 150
+
+                });
+                map.entities.push(infobox);
+                
+            });
     });
     // console.log(boundsCoordinates);
 
