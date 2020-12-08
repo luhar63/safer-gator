@@ -2,6 +2,7 @@ var LATS;
 var LONGS;
 var INFOBOX;
 var MATRIX;
+var PINS;
 function binarySearch(arr, x) {
     x = parseFloat(x);
     let start = 0, end = arr.length - 1;
@@ -37,7 +38,7 @@ function nearestSafeZone(x, y, type = 'zone') {
         for (var i = x - k; i <= x + k; i++) {
             for (var j = y - k; j <= y + k; j++) {
                 if (i == x - k || i == x + k || j == y - k || j == y + k) {
-                    if (i <= NUM_ROWS && j <= NUM_COLS && MATRIX[i][j]) {
+                    if (i >= 0 && j >= 0 && i <= NUM_ROWS && j <= NUM_COLS && MATRIX[i][j]) {
                         if (type === 'blp') {
                             if (MATRIX[i][j].blp_count > 0) {
                                 safePlaces = safePlaces.concat(MATRIX[i][j].blp);
@@ -61,7 +62,7 @@ function nearestSafeZone(x, y, type = 'zone') {
                 }
             }
         }
-        if (safePlaces.length > 0) {
+        if (safePlaces.length > 0 && type == 'zone') {
             break;
         }
         k++;
