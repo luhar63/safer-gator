@@ -17,7 +17,7 @@
     <script type="text/javascript" src="./main.js"></script> </script>
   </head>
   <body>
-    <nav class="menu">
+    <div class="menu">
       <ul>
         <li onclick="simulateGPSWithClick()">
           Go to safe zone
@@ -32,12 +32,18 @@
           SNAP stops 
         </li>
       </ul>
-    </nav>
-    <!-- <div id="printoutPanel"></div> -->
+    </div>
+    <div id="sidenav" class="sidenav-container">
+      <span class="drawer-close-button">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+      </span>
+      <div id="printoutPanel">Nothing to show</div>
+    </div>
     <div style="position: relative;">
       <div id="myMap" style="width: 100vw; height: 100vh"></div>
       <!-- <div class="button"></div> -->
     </div>
+    <div class="backdrop-container" id="backdrop"></div>
     <div class="legend">
       <canvas id="legendCanvas"></canvas>
       <span class="legend-min">safe</span>
@@ -165,6 +171,7 @@
         var map = new Microsoft.Maps.Map(document.getElementById("myMap"), {
           // maxBounds: bounds,
           disableStreetside: true,
+          showMapTypeSelector: false,
           center: new Microsoft.Maps.Location(
             29.64018522838967,
             -82.35579516657155
