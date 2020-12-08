@@ -23,7 +23,7 @@ app.listen(3000, () => {
     console.log('Server is up and running');
 });
 
-app.use(express.static(__dirname + "/views")); // html
+// app.use(express.static(__dirname + "/views")); // html
 app.use(express.static(__dirname + "/public")); // js, css, images
 
 app.use(express.json())
